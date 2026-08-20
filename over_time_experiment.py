@@ -14,7 +14,7 @@ from tqdm import tqdm
 from quapy.method.meta import HistNetQ
 from quapy.data import LabelledCollection
 import quapy.functional as F
-from method.composable import QUnfoldWrapper
+from quapy.method.composable import QUnfoldWrapper
 from quapy.method.aggregative import CC, ACC, DistributionMatchingY, EMQ, KDEyML
 from quapy.method.non_aggregative import DistributionMatchingX
 from transformers import AutoTokenizer, AutoModel
@@ -48,7 +48,10 @@ def prepare_xy_date_blocks(df, freq="M"):
     df = df.sort_values("tweet_created").reset_index(drop=True)
 
     X = df["text"].astype(str).values
-    y = df["airline_sentiment"].values
+    # forced to plain object dtype: pandas >= 2.something / 3.x infers string columns as the strict
+    # "string" dtype by default (future.infer_string), which rejects assigning an int (e.g., y[...] = 1)
+    # into it further below; a plain object array behaves like the old, loosely-typed numpy array
+    y = df["airline_sentiment"].to_numpy(dtype=object)
 
     # group dates by requested frequency
     date_groups = df["tweet_created"].dt.to_period(freq)

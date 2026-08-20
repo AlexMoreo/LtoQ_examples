@@ -22,7 +22,11 @@ First, let us configure the environment
 conda create -n quant python=3.11
 conda activate quant
 pip install quapy[neural]
+pip install transformers
 pip install kugglehub
+pip install --upgrade pip setuptools wheel
+pip install "jax[cpu]"
+pip install "qunfold @ git+https://github.com/mirkobunse/qunfold@v0.1.5"
 ```
 
 Then run the scripts without args, e.g.:
